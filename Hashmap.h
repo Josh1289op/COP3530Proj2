@@ -1,122 +1,81 @@
 #include <iostream>
 #include <ostream>
+#include <cstring>
+#include <string>
+#include <vector>
 
+#include <typeinfo>
+
+
+using namespace std;
+template <typename K, typename V>
 class Hashmap{
 
 private:
-	int* keys;
-	char* values;
+	struct Node{
+		K key;
+		V value;
+	};
+	Node ** map;
 	int SIZE;
 	int CAPACITY;
-	char valueEmpty = '-';
-	int keyEmpty = -1;
+	int PROBE;
 public:
-	Hashmap(int size){
-		keys = new int[size];
-		values = new char[size];
+	Hashmap(int size, int probe){
+		map = new Node*[size];
+		for (int i = 0; i < size; ++i){
+			map[i] = NULL;
+		}
 		SIZE = 0;
 		CAPACITY = size;
-		for (int i = 0; i < size; ++i){
-			keys[i] = keyEmpty;
-			values[i] = valueEmpty;
-		}
+		PROBE = probe;
 	}
+
+		
 	~Hashmap(){
 
 	}
 
-	bool insert(int key, char value){//insert a value into the map
+	int insert(K key, V value){//insert a value into the map
 		int i = 0;
-		while (i < CAPACITY){
-			int position = hash(key, i++);
-			if (values[position] == valueEmpty || keys[position] == key){
-				keys[position] = key;
-				values[position] = value;
-				++SIZE;
-				return true;
-			}
+		int position = hash(key, i);
+		if (map[position] == NULL){
+			map[position] = new Node;
+			++SIZE;
+			map[position]->key = key;
+			map[position]->value = value;
 		}
-		return false;
-	}
-
-	bool remove(int key, char &value){//remove an item from the map
-		int position = hash(key, 0);
-		int start = position;
-		while (keys[position] != key && values[position] != valueEmpty){
-			if (position == CAPACITY - 1){
-				position = 0;
-			}
-			else{
-				++position;
-			}
-			if (position == start){ //if we are at the end of the array, go to zero.
-				return false;
-			}
-		}
-		if (values[position] == valueEmpty){
-			return false;
-		}
-		else{//return the removed item, and reorder the list
-			value = values[position];
-			values[position] = valueEmpty;
-			keys[position] = keyEmpty;
-			--SIZE;
-			if (position == CAPACITY - 1){
-				position = 0;
-			}
-			else{
-				++position;
-			}
-			if (position == start){ //if we are at the end of the array, go to zero.
-				return true;
-			}
-			while (values[position] != valueEmpty){
-				char tempValue = values[position];
-				int tempKey = keys[position];
-				
-				values[position] = valueEmpty;
-				keys[position] = keyEmpty;
-				
-				insert(tempKey, tempValue);
-				
-				if (position == CAPACITY - 1){
-					position = 0;
+		else{
+			while (true){
+				if (i == CAPACITY){ //if we've probed too many times. FAIL! 
+					return (-1 * i);
 				}
-				else{
-					++position;
+				if (map[position]->key == key){
+					break; //this key exist, break  or empty position found
 				}
-				--SIZE;
-				if (position == start){ //if we are at the end of the array, go to zero.
+				position = hash(key, ++i);
+				if (map[position] == NULL){
+					++SIZE;
+					map[position] = new Node;
 					break;
 				}
 			}
-			--SIZE;
-			return true;
+			map[position]->value = value;
+			map[position]->key = key;
 		}
-
+		return i;
 	}
-	bool search(int key, char &value){//search for a value in the map
-		int position = hash(key, 0);
-		int start = position;
-		while (keys[position] != key && values[position] != valueEmpty ){
-			position >= CAPACITY ? 0 : ++position; // if not in the right place go to the next position
-			if (position == start){ //if we are at the end of the array, go to zero.
-				return false;
-			}
-		}
-		if (values[position] == valueEmpty){
-			return false;
-		}
-		else{
-			value = values[position];
-			return true;
-		}
+
+	int remove(K key, V &value){//remove an item from the map
+		
+		return 0;
+	}
+	int search(K key, V &value){//search for a value in the map
+		
+		return 0;
 	}
 	void clear(){//clear the whole map
-		delete[] keys;
-		delete[] values;
-		keys = new int[SIZE];
-		values = new char[SIZE];
+		
 	}
 
 	bool is_empty(){//is the map empty?
@@ -135,26 +94,81 @@ public:
 		return double(SIZE) / CAPACITY;
 	}
 
-	std::ostream& print(std::ostream& out) const {
-		out << "Capacity: " << CAPACITY << "  " << "SIZE: " << SIZE << "\n";
-		out << "k : v\n-----\n";
-		for (int i = 0; i < CAPACITY; ++i){
-			if (keys[i] == -1){
-				out << "-";
-			}
-			else{
-				out << keys[i];
-			}
-			out << " : " << values[i] << "\n";
-		}
+	std::ostream& print(std::ostream& out) {
+		cout << "Hash Map: " << endl << "Size: " << SIZE << endl << "Capacity: " << CAPACITY << endl << "Load: ";
+		cout <<  load() << endl;
 		return out;
 	}
 
 
 private: 
-	int hash(int key, int i){
-		//h(k, i) = f(k) + p(i) % M
-		return ((key + i) % CAPACITY);
+
+	
+
+	//------------------------------------PROBING FUNCTION------------------------------------------------
+	int probe(int key, int i) {//DEPENDING ON THE HASHING SETTING, DENOTES WHICH FUNCTION WE WILL USE
+		if (PROBE == 0) { //LINEAR
+			return i; 
+		}
+		else if (PROBE == 1) { //QUADRATIC 
+			return i*i; 
+		}
+		else { //double hash
+			return ((key * i) + i); 
+		}
 	}
-}
-;
+	//-----------------------------------------------------------------------------------------------------
+
+
+	//------MAIN HASHING FUNCTION--------------------------------
+	int hash(int key, int i){//INT HASH
+		//h(k, i) = f(k) + p(i) % M
+		return ((key + probe(key, i)) % CAPACITY);
+	}
+	//-----------------------------------------------------------
+
+
+	int hash(double key, int i){//DOUBLE HASH
+		int count = 0;
+		while (true){
+			key *= 10;
+			if (static_cast<long>(key) % 10 == 0){
+				break;
+			}
+			++count;
+		}
+		count = (int(key) * count) / 10;
+		return hash(count, i);
+	}
+
+
+	int hash(string key, int i){//STRING HASH
+		//convert strings to c strings and calculate the position that way. 
+		char const* cstring = key.c_str();
+		return hash(cstring, i);
+	}
+
+	int hash(char const* key, int i){//Cstring HASH
+		int j = 0;
+		int intKey = 0;
+		while (key[j] != NULL){
+			intKey += key[j] + j;
+			++j;
+		}
+		return hash(intKey, i);
+	}
+
+	bool compareTo(string a, string b){
+		return a == b;
+	}
+
+	bool compareTo(char const* a, char const* b){
+		return a == b;
+	}
+	bool compareTo(double a, double b){
+		return a == b;
+	}
+	bool compareTo(int a, int b){
+		return a == b;
+	}
+};

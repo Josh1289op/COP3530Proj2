@@ -1,17 +1,18 @@
 #include <iostream>
 #include <ostream>
-
+template <typename T>
 class HashmapBucket{
 
 private:
 	struct Node{
 		int key;
-		char value;
+		T value;
 		Node* next = NULL;
 
 	};
 	Node** map;
 	int SIZE;
+	int OCCUPIED;
 	int CAPACITY;
 
 		
@@ -22,13 +23,14 @@ public:
 			map[i] = NULL;
 		}
 		SIZE = 0;
+		OCCUPIED = 0;
 		CAPACITY = size;
 	}
 	~HashmapBucket(){
 
 	}
 
-	bool insert(int key, char value){//insert a value into the map
+	bool insert(int key, T value){//insert a value into the map
 		int position = hash(key);
 		Node* current = map[position];
 		if (current == NULL){//IF BUCKET COMPLETELY EMPTY!!!!
@@ -36,6 +38,7 @@ public:
 			current->key = key;
 			current->value = value;
 			map[position] = current;
+			++OCCUPIED;
 			++SIZE;
 			return true;
 		}
@@ -58,13 +61,14 @@ public:
 		}
 	}
 
-	bool remove(int key, char &value){//remove an item from the map
+	bool remove(int key, T &value){//remove an item from the map
 		int position = hash(key);
 		Node* current = map[position];
 		Node* temp;
-		if (current->key == key){
+		if (current->key == key){// if the first item in the bucket is the item i need
 			value = current->value;
 			temp = current->next;
+			if (temp == NULL){ --OCCUPIED; } // If the first item is the last item, --OCCUPIED
 			delete current;
 			map[position] = temp;
 			--SIZE;
@@ -84,10 +88,9 @@ public:
 		}
 		return false;
 	}
-	bool search(int key, char &value){//search for a value in the map
+	bool search(int key, T &value){//search for a value in the map
 		int position = hash(key);
 		Node * current = map[position];
-		Node* current = map[position];
 		Node* temp;
 		if (current->key == key){
 			value = current->value;
@@ -103,8 +106,19 @@ public:
 		}
 		return false;
 	}
+
+
 	void clear(){//clear the whole map
-	
+		for (int i = 0; i < CAPACITY; ++i){
+			Node * current = map[i];
+			Node * temp = current;
+			while (current != NULL){
+				temp = current;
+				current = current->next;
+				delete temp;
+			}
+		}
+		delete[] map;
 	}
 
 	bool is_empty(){//is the map empty?
@@ -120,7 +134,7 @@ public:
 	}
 
 	double load(){//size = load * capacity
-		return double(SIZE) / CAPACITY;
+		return double(OCCUPIED) / CAPACITY;
 	}
 
 	std::ostream& print(std::ostream& out) const {
