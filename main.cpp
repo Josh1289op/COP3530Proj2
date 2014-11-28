@@ -8,9 +8,30 @@ TEST_CASE("ADDING/REMOVING", "ADDING AND REMOVING FROM HASH, FILL AND EMPTY"){
 	SECTION("FILLING"){
 
 		Hashmap<char*, int> hashchar = Hashmap<char*, int>(5, 0);
-		hashchar.insert("hey", 1);
-		hashchar.insert("hey", 1);
+		hashchar.insert("c", 13);
+		hashchar.insert("c", 15);
+		hashchar.insert("d", 200);
+		hashchar.insert("h", 120);
 		hashchar.print(std::cout);
+		std::cout << endl << endl;
+		int myValue = 0;
+		hashchar.remove("c", myValue);
+		std::cout << "Returned Value: " << myValue << endl;
+		hashchar.print(std::cout);
+		std::cout << endl << endl;
+		std::cout << endl << endl;
+
+		Hashmap<std::string, int> hashstring = Hashmap<std::string, int>(5, 0);
+
+		hashstring.insert("l", 5);
+		hashstring.print(std::cout);
+		hashstring.insert("l", 232323);
+		hashstring.print(std::cout);
+		std::cout << "Search Probe: " << hashstring.search("l", myValue) << std::endl;
+		std::cout << "Value: " << myValue << std::endl;
+
+
+
 	}
 }
 

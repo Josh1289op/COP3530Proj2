@@ -50,8 +50,10 @@ public:
 				if (i == CAPACITY){ //if we've probed too many times. FAIL! 
 					return (-1 * i);
 				}
-				if (map[position]->key == key){
-					break; //this key exist, break  or empty position found
+				if (map[position] != NULL){
+					if (compareTo(map[position]->key, key)){
+						break; //this key exist, break  or empty position found
+					}
 				}
 				position = hash(key, ++i);
 				if (map[position] == NULL){
@@ -67,12 +69,51 @@ public:
 	}
 
 	int remove(K key, V &value){//remove an item from the map
-		
-		return 0;
+		int i = 0;
+		int position = hash(key, i);
+		while (true){
+			if (compareTo(map[position]->key, key) || map[position] == NULL || i > CAPACITY){
+				break;
+			}
+			position = hash(key, ++i);
+		}
+		if (map[position] == NULL){//IF MAP POSITION == NULL, THEY KEY ISN'T IN THE MAP
+			return (-1 * i);
+		}
+		else{//RETURN THE VALUE
+			value = map[position]->value;//RETURNING VALUE
+			delete map[position];//DELETING OLD NODE
+			map[position] = NULL;//SETTING OLD POSITION TO NODE(BASE VALUE)
+			--SIZE;//DECREASING SIZE
+			int tempI = i; //NUMBER OF PROBE ATTEMPTS TO FIND THE KEY
+			while (true){//NOW REDISTRIBUTE CLUSTER
+				position = hash(key, ++tempI);
+				if (map[position] == NULL){
+					break;
+				}
+				V tempValue = map[position]->value;
+				K tempKey = map[position]->key;
+				delete map[position];
+				map[position] = NULL;
+				--SIZE;
+				insert(tempKey, tempValue);
+			}
+		}
+
+		return i;//RETURN AMOUNT OF PROBE TIMES
 	}
 	int search(K key, V &value){//search for a value in the map
-		
-		return 0;
+		int i = 0;
+		int position = hash(key, i);
+		while (true){
+			if (compareTo(map[position]->key, key)){
+				value = map[position]->value;
+				return i;
+			}
+			int position = hash(key, ++i);
+		}
+
+		return i;
 	}
 	void clear(){//clear the whole map
 		
@@ -95,16 +136,24 @@ public:
 	}
 
 	std::ostream& print(std::ostream& out) {
-		cout << "Hash Map: " << endl << "Size: " << SIZE << endl << "Capacity: " << CAPACITY << endl << "Load: ";
-		cout <<  load() << endl;
+		out << "Hash Map: " << endl << "Size: " << SIZE << endl << "Capacity: " << CAPACITY << endl << "Load: ";
+		out << load() << endl << endl;	
+		out << "  KEY : VALUE  \n";
+		out << "  -----------\n";
+		for (int i = 0; i < CAPACITY; ++i){
+			if (map[i] != NULL){
+				out << setw(5) << map[i]->key << " : " << map[i]->value << endl;
+			}
+			else{
+				out << setw(8) << " : " << endl;
+			}
+		}
+
 		return out;
 	}
 
 
 private: 
-
-	
-
 	//------------------------------------PROBING FUNCTION------------------------------------------------
 	int probe(int key, int i) {//DEPENDING ON THE HASHING SETTING, DENOTES WHICH FUNCTION WE WILL USE
 		if (PROBE == 0) { //LINEAR
@@ -159,11 +208,11 @@ private:
 	}
 
 	bool compareTo(string a, string b){
-		return a == b;
+		return (strcmp(a.c_str(), b.c_str()) == 0);
 	}
 
 	bool compareTo(char const* a, char const* b){
-		return a == b;
+		return strcmp(a, b) == 0;
 	}
 	bool compareTo(double a, double b){
 		return a == b;
@@ -171,4 +220,5 @@ private:
 	bool compareTo(int a, int b){
 		return a == b;
 	}
+
 };
