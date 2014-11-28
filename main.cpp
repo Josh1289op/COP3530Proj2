@@ -25,13 +25,33 @@ TEST_CASE("ADDING/REMOVING", "ADDING AND REMOVING FROM HASH, FILL AND EMPTY"){
 
 		hashstring.insert("l", 5);
 		hashstring.print(std::cout);
-		hashstring.insert("l", 232323);
+		hashstring.insert("l", 3);
+		hashstring.insert("v", 1);
+		hashstring.insert("s", 21);
+		hashstring.insert("t", 4);
+		hashstring.insert("e", 223);
+		hashstring.insert("k", 9);
 		hashstring.print(std::cout);
-		std::cout << "Search Probe: " << hashstring.search("l", myValue) << std::endl;
+		std::cout << "Search Probe: " << hashstring.search("v", myValue) << std::endl;
 		std::cout << "Value: " << myValue << std::endl;
 
 
+		std::cout << "Removed: " << hashstring.remove("s", myValue);
+		std::cout << "   " << myValue << std::endl;
+		std::cout << "Removed: " << hashstring.remove("l", myValue);
+		std::cout << "   " << myValue << std::endl;
+		hashstring.print(std::cout);
+		std::cout << "Removed: " << hashstring.remove("s", myValue);
+		std::cout << "   " << myValue << std::endl;
+		hashstring.print(std::cout);
+		
+		std::cout << hashstring.cluster_distribution();
+		std::cout << std::endl << std::endl;
 
+		std::cout << hashstring.remove_random() << std::endl;
+		hashstring.print(std::cout);
+		std::cout << hashstring.remove_random() << std::endl;
+		hashstring.print(std::cout);
 	}
 }
 

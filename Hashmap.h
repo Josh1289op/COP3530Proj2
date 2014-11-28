@@ -3,7 +3,7 @@
 #include <cstring>
 #include <string>
 #include <vector>
-
+#include <time.h>
 #include <typeinfo>
 
 
@@ -72,7 +72,10 @@ public:
 		int i = 0;
 		int position = hash(key, i);
 		while (true){
-			if (compareTo(map[position]->key, key) || map[position] == NULL || i > CAPACITY){
+			if (map[position] == NULL){
+				break;
+			}
+			if (compareTo(map[position]->key, key) || i > CAPACITY){
 				break;
 			}
 			position = hash(key, ++i);
@@ -110,7 +113,7 @@ public:
 				value = map[position]->value;
 				return i;
 			}
-			int position = hash(key, ++i);
+			position = hash(key, ++i);
 		}
 
 		return i;
@@ -152,6 +155,47 @@ public:
 		return out;
 	}
 
+	std::string cluster_distribution(){
+		stringstream str;
+		str << "(";
+		int count = 0;
+		int amount = 0;
+		for (int i = 1; i < CAPACITY; ++i){
+			
+			for (int j = 0; j < CAPACITY; ++j){
+				if (map[j] != NULL){
+					++count;
+				}
+				else{
+					if (count > i || count < i){
+						count = 0;
+					}
+					else{
+						++amount;
+					}
+				}
+			}
+			if (amount > 0){
+				str << "(" << i << "," << amount << ")";
+			}
+			amount = 0;
+		}
+		str << ")";
+		return str.str();
+	}
+
+	K remove_random(){
+		srand(time(NULL));
+		int r =  rand() % CAPACITY;
+		while (map[r] == NULL){
+			r = rand() % CAPACITY;
+		}
+		std::cout << r << std::endl;
+		K key = map[r]->key;
+		V myValue;
+		remove(key, myValue);
+		return key;
+	}
 
 private: 
 	//------------------------------------PROBING FUNCTION------------------------------------------------
