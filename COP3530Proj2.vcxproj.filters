@@ -257,6 +257,9 @@
     <ClInclude Include="HashmapBucket.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="RBST.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="catch\include\internal\#catch_runner_impl.hpp#" />

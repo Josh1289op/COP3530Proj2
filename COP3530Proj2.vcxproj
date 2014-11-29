@@ -153,6 +153,7 @@
     <ClInclude Include="catch\include\reporters\catch_reporter_xml.hpp" />
     <ClInclude Include="Hashmap.h" />
     <ClInclude Include="HashmapBucket.h" />
+    <ClInclude Include="RBST.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="catch\include\internal\#catch_runner_impl.hpp#" />
