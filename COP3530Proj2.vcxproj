@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{37245D4D-F7E2-4272-BCA8-36D2406A0D32}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="catch\include\catch.hpp" />
+    <ClInclude Include="catch\include\catch_runner.hpp" />
+    <ClInclude Include="catch\include\catch_with_main.hpp" />
+    <ClInclude Include="catch\include\internal\catch_approx.hpp" />
+    <ClInclude Include="catch\include\internal\catch_assertionresult.h" />
+    <ClInclude Include="catch\include\internal\catch_assertionresult.hpp" />
+    <ClInclude Include="catch\include\internal\catch_capture.hpp" />
+    <ClInclude Include="catch\include\internal\catch_commandline.hpp" />
+    <ClInclude Include="catch\include\internal\catch_common.h" />
+    <ClInclude Include="catch\include\internal\catch_compiler_capabilities.h" />
+    <ClInclude Include="catch\include\internal\catch_config.hpp" />
+    <ClInclude Include="catch\include\internal\catch_console_colour.hpp" />
+    <ClInclude Include="catch\include\internal\catch_console_colour_impl.hpp" />
+    <ClInclude Include="catch\include\internal\catch_context.h" />
+    <ClInclude Include="catch\include\internal\catch_context_impl.hpp" />
+    <ClInclude Include="catch\include\internal\catch_debugger.hpp" />
+    <ClInclude Include="catch\include\internal\catch_default_main.hpp" />
+    <ClInclude Include="catch\include\internal\catch_evaluate.hpp" />
+    <ClInclude Include="catch\include\internal\catch_exception_translator_registry.hpp" />
+    <ClInclude Include="catch\include\internal\catch_expressionresult_builder.h" />
+    <ClInclude Include="catch\include\internal\catch_expressionresult_builder.hpp" />
+    <ClInclude Include="catch\include\internal\catch_expression_decomposer.hpp" />
+    <ClInclude Include="catch\include\internal\catch_expression_lhs.hpp" />
+    <ClInclude Include="catch\include\internal\catch_generators.hpp" />
+    <ClInclude Include="catch\include\internal\catch_generators_impl.hpp" />
+    <ClInclude Include="catch\include\internal\catch_impl.hpp" />
+    <ClInclude Include="catch\include\internal\catch_interfaces_capture.h" />
+    <ClInclude Include="catch\include\internal\catch_interfaces_config.h" />
+    <ClInclude Include="catch\include\internal\catch_interfaces_exception.h" />
+    <ClInclude Include="catch\include\internal\catch_interfaces_generators.h" />
+    <ClInclude Include="catch\include\internal\catch_interfaces_registry_hub.h" />
+    <ClInclude Include="catch\include\internal\catch_interfaces_reporter.h" />
+    <ClInclude Include="catch\include\internal\catch_interfaces_runner.h" />
+    <ClInclude Include="catch\include\internal\catch_interfaces_testcase.h" />
+    <ClInclude Include="catch\include\internal\catch_legacy_reporter_adapter.h" />
+    <ClInclude Include="catch\include\internal\catch_legacy_reporter_adapter.hpp" />
+    <ClInclude Include="catch\include\internal\catch_list.hpp" />
+    <ClInclude Include="catch\include\internal\catch_matchers.hpp" />
+    <ClInclude Include="catch\include\internal\catch_message.h" />
+    <ClInclude Include="catch\include\internal\catch_message.hpp" />
+    <ClInclude Include="catch\include\internal\catch_notimplemented_exception.h" />
+    <ClInclude Include="catch\include\internal\catch_notimplemented_exception.hpp" />
+    <ClInclude Include="catch\include\internal\catch_objc.hpp" />
+    <ClInclude Include="catch\include\internal\catch_objc_arc.hpp" />
+    <ClInclude Include="catch\include\internal\catch_option.hpp" />
+    <ClInclude Include="catch\include\internal\catch_platform.h" />
+    <ClInclude Include="catch\include\internal\catch_ptr.hpp" />
+    <ClInclude Include="catch\include\internal\catch_registry_hub.hpp" />
+    <ClInclude Include="catch\include\internal\catch_reporter_registrars.hpp" />
+    <ClInclude Include="catch\include\internal\catch_reporter_registry.hpp" />
+    <ClInclude Include="catch\include\internal\catch_result_type.h" />
+    <ClInclude Include="catch\include\internal\catch_runner_impl.hpp" />
+    <ClInclude Include="catch\include\internal\catch_section.hpp" />
+    <ClInclude Include="catch\include\internal\catch_section_info.hpp" />
+    <ClInclude Include="catch\include\internal\catch_sfinae.hpp" />
+    <ClInclude Include="catch\include\internal\catch_stream.hpp" />
+    <ClInclude Include="catch\include\internal\catch_streambuf.h" />
+    <ClInclude Include="catch\include\internal\catch_tags.hpp" />
+    <ClInclude Include="catch\include\internal\catch_test_case_info.h" />
+    <ClInclude Include="catch\include\internal\catch_test_case_info.hpp" />
+    <ClInclude Include="catch\include\internal\catch_test_case_registry_impl.hpp" />
+    <ClInclude Include="catch\include\internal\catch_test_case_tracker.hpp" />
+    <ClInclude Include="catch\include\internal\catch_test_registry.hpp" />
+    <ClInclude Include="catch\include\internal\catch_test_spec.h" />
+    <ClInclude Include="catch\include\internal\catch_text.h" />
+    <ClInclude Include="catch\include\internal\catch_text.hpp" />
+    <ClInclude Include="catch\include\internal\catch_timer.h" />
+    <ClInclude Include="catch\include\internal\catch_timer.hpp" />
+    <ClInclude Include="catch\include\internal\catch_tostring.hpp" />
+    <ClInclude Include="catch\include\internal\catch_totals.hpp" />
+    <ClInclude Include="catch\include\internal\catch_version.h" />
+    <ClInclude Include="catch\include\internal\catch_version.hpp" />
+    <ClInclude Include="catch\include\internal\catch_xmlwriter.hpp" />
+    <ClInclude Include="catch\include\internal\clara.h" />
+    <ClInclude Include="catch\include\reporters\catch_reporter_console.hpp" />
+    <ClInclude Include="catch\include\reporters\catch_reporter_junit.hpp" />
+    <ClInclude Include="catch\include\reporters\catch_reporter_xml.hpp" />
+    <ClInclude Include="Hashmap.h" />
+    <ClInclude Include="HashmapBucket.h" />
+    <ClInclude Include="RBST.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="catch\include\internal\#catch_runner_impl.hpp#" />
+    <None Include="catch\include\internal\catch_capture.hpp~" />
+    <None Include="catch\include\internal\catch_impl.hpp~" />
+    <None Include="catch\include\internal\catch_test_registry.hpp~" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
