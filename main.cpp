@@ -8,6 +8,7 @@
 
 
 TEST_CASE("RBST", "WRITING BST CODE"){
+	freopen("output.txt", "w", stdout);
 	SECTION("GENERAL TESTING"){
 		RBST<int, int> rbst = RBST<int, int>(5);
 		rbst.insert(5, 2);

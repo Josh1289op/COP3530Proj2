@@ -1,6 +1,8 @@
 #include <iostream>
 #include <ostream>
 #include <cstring>
+#include <cstdlib>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <time.h>
@@ -145,10 +147,10 @@ public:
 		out << "  -----------\n";
 		for (int i = 0; i < CAPACITY; ++i){
 			if (map[i] != NULL){
-				out << setw(5) << map[i]->key << " : " << map[i]->value << endl;
+				out << "    " << map[i]->key << " : " << map[i]->value << endl;
 			}
 			else{
-				out << setw(8) << " : " << endl;
+				out << "    " << " : " << endl;
 			}
 		}
 

@@ -1,5 +1,16 @@
 #include <iostream>
+#include <string> 
+#include <stdio.h>
+#include <cstdlib>
+#include <sstream>
 #include <ostream>
+#include <cstring>
+#include <string>
+#include <vector>
+#include <time.h>
+#include <typeinfo>
+
+
 template <typename K, typename V>
 class HashmapBucket{
 
@@ -15,7 +26,7 @@ private:
 	int OCCUPIED;
 	int CAPACITY;
 
-		
+
 public:
 	HashmapBucket(int size){
 		map = new Node*[size];
@@ -33,7 +44,7 @@ public:
 	bool insert(K key, V value){//insert a value into the map
 		int position = hash(key);
 		Node* current = map[position];
-		std::cout << "inserting: " << endl;
+		std::cout << "inserting: " << std::endl;
 		if (current == NULL){//IF BUCKET COMPLETELY EMPTY!!!!
 			current = new Node();
 			current->key = key;
@@ -45,14 +56,14 @@ public:
 		}
 		else{
 			int i = 1;
-			std::cout << "BLAH: " << current->key << "   " << key << endl;
+			std::cout << "BLAH: " << current->key << "   " << key << std::endl;
 
 			while (current->next != NULL && !compareTo(current->key, key)){
-				std::cout << current->key << "   " << key << endl;
+				std::cout << current->key << "   " << key << std::endl;
 				current = current->next;
-			}			std::cout << "BLAH: " << current->key << "   " << key << endl;
+			}			std::cout << "BLAH: " << current->key << "   " << key << std::endl;
 
-			std::cout << "BLAH: " << current->key << "   " << key << endl;
+			std::cout << "BLAH: " << current->key << "   " << key << std::endl;
 
 			if (compareTo(current->key, key)){//if matching key was found, replace the value. 
 				current->value = value;
@@ -198,7 +209,7 @@ private:
 	}
 
 
-	int hash(string key){//STRING HASH
+	int hash(std::string key){//STRING HASH
 		//convert strings to c strings and calculate the position that way. 
 		char const* cstring = key.c_str();
 		return hash(cstring);
@@ -214,7 +225,7 @@ private:
 		return hash(intKey);
 	}
 
-	bool compareTo(string a, string b){
+	bool compareTo(std::string a, std::string b){
 		return (strcmp(a.c_str(), b.c_str()) == 0);
 	}
 
@@ -227,5 +238,4 @@ private:
 	bool compareTo(int a, int b){
 		return a == b;
 	}
-}
-;
+};

@@ -1,33 +1,47 @@
 #include <iostream>
 #include <ostream>
 #include <queue>
+#include <string> 
+#include <stdio.h>
+#include <cstdlib>
+#include <sstream>
+#include <cstring>
+#include <string>
+#include <vector>
+#include <time.h>
+#include <typeinfo>
 template <typename K, typename V>
 class RBST{
 private:
 	struct Node{
-		int right = -1;
-		int left = -1;
+		int right;
+		int left;
 		V value;
 		K key;
 	};
-	std::size_t SIZE = 0;
+	std::size_t SIZE;
 	std::size_t CAPACITY;
-	int freelist = 0;
-	int root = -1;
+	int freelist;
+	int root;
 	Node ** map;
 public:
 	RBST(int capacity){
 		srand(time(NULL));
-		map = new Node*[capacity]; 
+		map = new Node*[capacity];
 		for (int i = 0; i < capacity; ++i){
 			map[i] = new Node;
 			if (i < capacity - 1){
+				map[i]->right = -1;
 				map[i]->left = i + 1;
 			}
 			else{
+				map[i]->right = -1;
 				map[i]->left = -1;
 			}
 		}
+		freelist = 0;
+		root = -1;
+		SIZE = 0;
 		CAPACITY = capacity;
 	}
 
@@ -56,7 +70,7 @@ public:
 		else{
 			int random = rand() % 10;
 			if (random == 0){//insert at root
-				std::cout << "ROOT INSERT" << endl;
+				std::cout << "ROOT INSERT" << std::endl;
 				v = insertAtRoot(root, key, value, v);
 			}
 			else{//insert at leaf node
@@ -88,7 +102,7 @@ public:
 		else{
 			child = map[parent]->left;
 		}
-		std::cout << "Parent: " << parent << " Child:" << child << " value:" << map[child]->value << endl;
+		std::cout << "Parent: " << parent << " Child:" << child << " value:" << map[child]->value << std::endl;
 		//CASE1: if node has no children
 		if (map[child]->right == -1 && map[child]->left == -1){
 			value = map[child]->value;
@@ -96,7 +110,7 @@ public:
 			pushFrontFreelist(child);
 		}
 		//CASE2: if node has only one child
-		else if((map[child]->right == -1) != (map[child]->left == -1)){
+		else if ((map[child]->right == -1) != (map[child]->left == -1)){
 			value = map[child]->value;
 			if (map[child]->right != -1){//we have a right child
 				left ? map[parent]->left = map[child]->right : map[parent]->right = map[child]->right;
@@ -126,7 +140,7 @@ public:
 	}
 
 
-	
+
 	void findMin(int parent, int& min){
 		if (greater(map[parent]->key, map[min]->key)){
 			min = parent;
@@ -164,7 +178,7 @@ public:
 			}
 			return -1;
 		}
-		
+
 
 
 
@@ -194,8 +208,8 @@ public:
 	}
 
 	std::ostream& printArray(std::ostream& out){
-		out << "Root: " << root << endl;
-		out << "Freelist " << freelist << endl;
+		out << "Root: " << root << std::endl;
+		out << "Freelist " << freelist << std::endl;
 		for (int i = 0; i < CAPACITY; ++i){
 			out << "Index: " << i << "  Key: " << map[i]->key << "  Value: " << map[i]->value << "  Left: " << map[i]->left << "  Right: " << map[i]->right << std::endl;
 		}
@@ -207,7 +221,7 @@ public:
 	}
 
 	std::ostream& printArrayHelper(std::ostream& out, int parent){
-		queue<int> que = queue<int>();
+		std::queue<int> que = std::queue<int>();
 		out << "[";
 		que.push(parent);//prime
 		while (!que.empty()){
@@ -235,12 +249,12 @@ public:
 	std::size_t size(){
 		return SIZE;
 	}
-	
+
 	std::size_t capacity(){
 		return CAPACITY;
 	}
 
-	std::double_t load(){
+	double load(){
 		return(double(SIZE) / CAPACITY);
 	}
 
@@ -263,8 +277,8 @@ public:
 		}
 		SIZE = 0;
 	}
-	
-	
+
+
 private:
 
 	int insertAtLeaf(int parent, K key, V value, int v){
@@ -314,11 +328,11 @@ private:
 
 
 	int insertAtRoot(int parent, K key, V value, int v){
-		std::cout << "INSERTING AT ROOT " << endl;
+		std::cout << "INSERTING AT ROOT " << std::endl;
 		++v;
 		if (greater(map[parent]->key, key)){
 			if (map[parent]->right == -1 && freelist != -1){
-				std::cout << "Going right" << endl;
+				std::cout << "Going right" << std::endl;
 				//if the right is empty and theres a node avail, put the next freenode there and move freenode
 				map[parent]->right = freelist;//giving right child freenode
 				freelist = map[freelist]->left;//giving freelist the next free, it gets -1 if there is no free.
@@ -342,7 +356,7 @@ private:
 		}
 		else{//key, less than parent key moving left
 			if (map[parent]->left == -1 && freelist != -1){
-				std::cout << "Going left" << endl;
+				std::cout << "Going left" << std::endl;
 				//if the right is empty and theres a node avail, put the next freenode there and move freenode
 				map[parent]->left = freelist;//giving right child freenode
 				freelist = map[freelist]->left;//giving freelist the next free, it gets -1 if there is no free.
@@ -356,7 +370,7 @@ private:
 				return v;//RETURN VISITED NODES
 			}
 			else if (map[parent]->left == -1){
-				std::cout << "No Nodes Left" << endl;
+				std::cout << "No Nodes Left" << std::endl;
 				return -1 * v; //NO ROOM FOR NODE
 			}
 			else{
@@ -381,7 +395,7 @@ private:
 	}
 
 	void rotateLeft(int parent){
-		std::cout << "rotating left " << endl;
+		std::cout << "rotating left " << std::endl;
 		int temp = map[parent]->right;//get the right childs address
 		Node * swap = map[temp];// save the right child's Node
 		map[temp] = map[parent];// swap the right child with parent Node
@@ -401,12 +415,12 @@ private:
 	}
 
 	int removeRoot(){
-		std::cout << "removing root" << endl;
+		std::cout << "removing root" << std::endl;
 		return 0;
 	}
 
-//-----------------------EQUAL TO OPERATOR----------------------//
-	bool compareTo(string a, string b){
+	//-----------------------EQUAL TO OPERATOR----------------------//
+	bool compareTo(std::string a, std::string b){
 		return (strcmp(a.c_str(), b.c_str()) == 0);
 	}
 
@@ -420,8 +434,8 @@ private:
 		return a == b;
 	}
 
-//-----------------------GREATER THAN OPERATOR---------------//
-	bool greater(string a, string b){
+	//-----------------------GREATER THAN OPERATOR---------------//
+	bool greater(std::string a, std::string b){
 		if (strcmp(a.c_str(), b.c_str()) < 0){
 			return true;
 		}
