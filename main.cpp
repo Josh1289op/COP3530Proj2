@@ -9,45 +9,24 @@
 
 TEST_CASE("RBST", "WRITING BST CODE"){
 	SECTION("GENERAL TESTING"){
-		RBST<std::string, int> rbst = RBST<std::string, int>(5);
-		
+		RBST<int, int> rbst = RBST<int, int>(5);
+		rbst.insert(5, 2);
 		rbst.printArray(std::cout);
-		rbst.print(std::cout);
-
-		cout << "inserting Hello - 6" << endl;
-		std::cout << "Hello: " << rbst.insert("Hello", 6) << endl;
-		std::cout << rbst.size() << std::endl;
-		std::cout << rbst.load() << std::endl;
-
-		cout << "inserting Abs - 7" << endl;
-		cout << "Abs: " << rbst.insert("Abs", 7);
-
+		rbst.insert(-1, 3);
 		rbst.printArray(std::cout);
-		rbst.print(std::cout);
-
-
-	
-		cout << "inserting Zoe - 8" << endl;
-		std::cout << "Zoe: " << rbst.insert("Zoe", 8) << endl;
-		
+		rbst.insert(2, 4);
 		rbst.printArray(std::cout);
-		rbst.print(std::cout);
-
-		cout << "inserting Heo - 7" << endl;
-		std::cout << "Heo: " << rbst.insert("Heo", 12) << endl;
-
-		rbst.print(std::cout);
+		rbst.insert(3, 1);
+		rbst.printArray(std::cout);
+		rbst.insert(-4, 14);
 		rbst.printArray(std::cout);
 
-		cout << "inserting Chicko - 7" << endl;
-		std::cout << "Chicko: " << rbst.insert("Chicko", 12) << endl;
-
-		rbst.print(std::cout);
+		int v = 0;
+		std::cout << rbst.remove(-1, v);
+		std::cout << v;
 		rbst.printArray(std::cout);
 
-		int myValue = 0;
-		std::cout << "v: " << rbst.search("Chicko", myValue) << endl;
-		std::cout << myValue << endl;
+
 	}
 }
 

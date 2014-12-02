@@ -1,5 +1,6 @@
 #include <iostream>
 #include <ostream>
+#include <queue>
 template <typename K, typename V>
 class RBST{
 private:
@@ -16,6 +17,7 @@ private:
 	Node ** map;
 public:
 	RBST(int capacity){
+		srand(time(NULL));
 		map = new Node*[capacity]; 
 		for (int i = 0; i < capacity; ++i){
 			map[i] = new Node;
@@ -32,90 +34,202 @@ public:
 	~RBST(){}
 
 	int insert(K key, V value){
-		int v = 0;
-		if (root == -1){
+		//get random number and decide whether or not to enter at root or leaf node
+		int v = 0; // NODES VISITED
+		//if the root index is null, insert at root.
+		for (int i = 0; i < CAPACITY; ++i){
+			++v;
+			if (compareTo(map[i]->key, key)){
+				map[i]->value = value;
+				return v;
+			}
+		}
+		v = 0;
+		if (root == -1) {//root is empty
 			root = freelist;
-			map[freelist]->value = value;
-			map[freelist]->key = key;
-			int i = map[freelist]->left;
-			map[freelist]->left = -1;
-			map[freelist]->right = -1;
-			freelist = i;
-			++SIZE;
-			return 0;//ROOT NULL, CREATE ROOT AND RETURN 0
+			freelist = map[freelist]->left;
+			map[root]->left = -1;
+			map[root]->right = -1;
+			map[root]->key = key;
+			map[root]->value = value;
 		}
-		int current = root;
-		int previous = root;
-		while (current != -1){
-			if (compareTo(map[current]->key, key)){//if the ket already exist
-				++v;//visited another node
-				std::cout << "KEY IS EQUAL" << endl;
-				map[current]->value = value;
-				return v;//KEY = KEY REPLACE VALUE AND RETURN V
+		else{
+			int random = rand() % 10;
+			if (random == 0){//insert at root
+				std::cout << "ROOT INSERT" << endl;
+				v = insertAtRoot(root, key, value, v);
 			}
-			else if (greater(map[current]->key, key)){
-				++v;//visited another node
-				std::cout << "ITEM IS GREATER" << endl;
-				previous = current;
-				current = map[current]->right;//moving right
-				if (current == -1 && freelist != -1){
-					map[previous]->right = freelist;
-					current = map[previous]->right;
-					break;
-				}
-			}
-			else{
-				++v;//visited another node
-				std::cout << "ITEM IS LESS" << endl;
-				previous = current;
-				current = map[current]->left;//moving left
-				if (current == -1 && freelist != -1){
-					map[previous]->left = freelist;
-					current = map[previous]->left;
-					break;
-				}
+			else{//insert at leaf node
+				v = insertAtLeaf(root, key, value, v);
 			}
 		}
-		if (freelist == -1){
-			std::cout << "Getting to Neg" << endl;
-			return -1 * v;
-		}
-		freelist = map[freelist]->left;
-		map[current]->value = value;
-		map[current]->key = key; 
-		map[current]->left = -1;
-		map[current]->right = -1;
-		++SIZE;
 		return v;
 	}
 
+	int remove(K key, V& value){
+		int v = 0;
+		int parent = 0;
+		if (compareTo(map[root]->key, key)){
+			parent = root;
+			return removeRoot();
+		}
+		else{
+			parent = findNode(key, root, v);//returns the parent to the key
+		}
+		int child = -1;//initialize the child
+		bool left = true;
+		if (parent == -1){//didn't find anything.
+			return -1 * v;
+		}
+		if (greater(map[parent]->key, key)){//which child are you
+			child = map[parent]->right;
+			left = false;
+		}
+		else{
+			child = map[parent]->left;
+		}
+		std::cout << "Parent: " << parent << " Child:" << child << " value:" << map[child]->value << endl;
+		//CASE1: if node has no children
+		if (map[child]->right == -1 && map[child]->left == -1){
+			value = map[child]->value;
+			left ? map[parent]->left = -1 : map[parent]->right = -1;
+			pushFrontFreelist(child);
+		}
+		//CASE2: if node has only one child
+		else if((map[child]->right == -1) != (map[child]->left == -1)){
+			value = map[child]->value;
+			if (map[child]->right != -1){//we have a right child
+				left ? map[parent]->left = map[child]->right : map[parent]->right = map[child]->right;
+				pushFrontFreelist(child);
+			}
+			else{//map[child]->left != -1 // we have a left child
+				left ? map[parent]->left = map[child]->left : map[parent]->right = map[child]->left;
+				pushFrontFreelist(child);
+			}
+
+		}
+		//CASE3: AHHHH node has two children
+		else{
+			int min = map[child]->right;
+			findMin(map[child]->right, min);
+			value = map[child]->value;
+			K tempKey = map[min]->key;
+			map[child]->value = map[min]->value;
+			printArray(std::cout);
+			V placeholder;
+
+			remove(min, placeholder);
+			map[child]->key = tempKey;
+
+		}
+		return v + 1;
+	}
+
+
+	
+	void findMin(int parent, int& min){
+		if (greater(map[parent]->key, map[min]->key)){
+			min = parent;
+		}
+		if (map[parent]->right != -1){
+			findMin(map[parent]->right, min);
+		}
+		if (map[parent]->left != -1){
+			findMin(map[parent]->left, min);
+		}
+
+	}
+
+	int findNode(K key, int parent, int& v){//RECURSIVE SEARCHING FUNCTION. RETURNS ARRAY POSITION OF KEY VALUE
+		++v;
+		if (greater(map[parent]->key, key)){
+			if (map[parent]->right != -1){
+				if (compareTo(map[map[parent]->right]->key, key)){
+					return parent;
+				}
+				else{
+					return findNode(key, map[parent]->right, v);
+				}
+			}
+			return -1;
+		}
+		else{
+			if (map[parent]->left != -1){
+				if (compareTo(map[map[parent]->left]->key, key)){
+					return parent;
+				}
+				else{
+					return findNode(key, map[parent]->left, v);
+				}
+			}
+			return -1;
+		}
+		
+
+
+
+	}
 
 	int search(K key, V& value){
 		int v = 0;
-		int current = root;
-		while (current != -1){
-			if (compareTo(map[current]->key, key)){
-				value = map[current]->value;
-				return v;
-			}
-			if (greater(map[current]->key, key)){
-				current = map[current]->right;
-			}
-			else{
-				current = map[current]->left;
-			}
-			++v;
+		int parent = 0;
+		if (compareTo(map[root]->key, key)){
+			parent = root;
 		}
-		return v;
+		else{
+			parent = findNode(key, root, v);//returns the parent to the key
+		}
+		int child = -1;//initialize the child
+		bool left = true;
+		if (parent == -1){//didn't find anything.
+			return -1 * v;
+		}
+		if (greater(map[parent]->key, key)){//which child are you
+			child = map[parent]->right;
+			left = false;
+		}
+		else{
+			child = map[parent]->left;
+		}
 	}
 
 	std::ostream& printArray(std::ostream& out){
-		out << endl;
+		out << "Root: " << root << endl;
+		out << "Freelist " << freelist << endl;
 		for (int i = 0; i < CAPACITY; ++i){
-			out << "Array: " << i << endl;
-			out << "Left: " << map[i]->left << "   Right: " << map[i]->right << endl << endl;
+			out << "Index: " << i << "  Key: " << map[i]->key << "  Value: " << map[i]->value << "  Left: " << map[i]->left << "  Right: " << map[i]->right << std::endl;
+		}
+
+		printArrayHelper(out, root);
+
+		out << "\n\n";
+		return out;
+	}
+
+	std::ostream& printArrayHelper(std::ostream& out, int parent){
+		queue<int> que = queue<int>();
+		out << "[";
+		que.push(parent);//prime
+		while (!que.empty()){
+			int n = que.front();
+			que.pop();
+			if (n != -1){
+				out << map[n]->key;
+				que.push(map[n]->left);
+				que.push(map[n]->right);
+			}
+			else{
+				out << "-";
+			}
+			if (!que.empty()){
+				out << ", ";
+			}
+			else{
+				out << "]\n\n";
+			}
 		}
 		return out;
+
 	}
 
 	std::size_t size(){
@@ -149,32 +263,147 @@ public:
 		}
 		SIZE = 0;
 	}
-	std::ostream& print(std::ostream& out){
-
-		out << "\n--------------------\n";
-		int current = freelist;
-		while(current != -1){
-			cout << map[current]->left;
-			current = map[current]->left;
-		}
-		out << "\n--------------------\n";
-
-		printHelp(out, root);
-		return out;
-	}
-
-	std::ostream& printHelp(std::ostream& out, int current){
-		if (current == -1){
-			return out;
-		}
-		out <<"Node: " << current << " | Key: " << map[current]->key << " | Value: " << map[current]->value << " | Left: " << map[current]->left << " | Right: " << map[current]->right << endl;
-		printHelp(out, map[current]->left);
-		printHelp(out, map[current]->right);
-		
-	}
 	
 	
 private:
+
+	int insertAtLeaf(int parent, K key, V value, int v){
+		++v;
+		if (greater(map[parent]->key, key)){
+			if (map[parent]->right == -1 && freelist != -1){
+				//if the right is empty and theres a node avail, put the next freenode there and move freenode
+				map[parent]->right = freelist;//giving right child freenode
+				freelist = map[freelist]->left;//giving freelist the next free, it gets -1 if there is no free.
+				int child = map[parent]->right;
+				map[child]->right = -1;
+				map[child]->left = -1;
+				map[child]->value = value;
+				map[child]->key = key;
+				++SIZE;//ITEM WAS ADDED
+				return v;//RETURN VISITED NODES
+			}
+			else if (map[parent]->right == -1){
+				return -1 * v; //NO ROOM FOR NODE
+			}
+			else{
+				return insertAtLeaf(map[parent]->right, key, value, v);// move on to find next free
+			}
+		}
+		else{//key, less than parent key moving left
+			if (map[parent]->left == -1 && freelist != -1){
+				//if the right is empty and theres a node avail, put the next freenode there and move freenode
+				map[parent]->left = freelist;//giving right child freenode
+				freelist = map[freelist]->left;//giving freelist the next free, it gets -1 if there is no free.
+				int child = map[parent]->left;
+				map[child]->right = -1;
+				map[child]->left = -1;
+				map[child]->value = value;
+				map[child]->key = key;
+				++SIZE;//ITEM WAS ADDED
+				return v;//RETURN VISITED NODES
+			}
+			else if (map[parent]->left == -1){
+				return -1 * v; //NO ROOM FOR NODE
+			}
+			else{
+				return insertAtLeaf(map[parent]->left, key, value, v);// move on to find next free
+			}
+		}
+		return v;
+	}
+
+
+	int insertAtRoot(int parent, K key, V value, int v){
+		std::cout << "INSERTING AT ROOT " << endl;
+		++v;
+		if (greater(map[parent]->key, key)){
+			if (map[parent]->right == -1 && freelist != -1){
+				std::cout << "Going right" << endl;
+				//if the right is empty and theres a node avail, put the next freenode there and move freenode
+				map[parent]->right = freelist;//giving right child freenode
+				freelist = map[freelist]->left;//giving freelist the next free, it gets -1 if there is no free.
+				int child = map[parent]->right;
+				map[child]->right = -1;
+				map[child]->left = -1;
+				map[child]->value = value;
+				map[child]->key = key;
+				++SIZE;//ITEM WAS ADDED
+				rotateLeft(parent);
+				return v;//RETURN VISITED NODES
+			}
+			else if (map[parent]->right == -1){
+				return -1 * v; //NO ROOM FOR NODE
+			}
+			else{
+				v = insertAtRoot(map[parent]->right, key, value, v);// move on to find next free
+				rotateLeft(parent);//before returning, rotate back up, in the oposite direction
+				return v;
+			}
+		}
+		else{//key, less than parent key moving left
+			if (map[parent]->left == -1 && freelist != -1){
+				std::cout << "Going left" << endl;
+				//if the right is empty and theres a node avail, put the next freenode there and move freenode
+				map[parent]->left = freelist;//giving right child freenode
+				freelist = map[freelist]->left;//giving freelist the next free, it gets -1 if there is no free.
+				int child = map[parent]->left;
+				map[child]->right = -1;
+				map[child]->left = -1;
+				map[child]->value = value;
+				map[child]->key = key;
+				++SIZE;//ITEM WAS ADDED
+				rotateRight(parent);
+				return v;//RETURN VISITED NODES
+			}
+			else if (map[parent]->left == -1){
+				std::cout << "No Nodes Left" << endl;
+				return -1 * v; //NO ROOM FOR NODE
+			}
+			else{
+				v = insertAtRoot(map[parent]->left, key, value, v);// move on to find next free
+				rotateRight(parent);//before returning, rotate back up, in the oposite direction
+				return v;
+			}
+		}
+		return v;
+		return 0;
+	}
+
+	void rotateRight(int parent){
+		int temp = map[parent]->left;//get the left childs address
+		Node * swap = map[temp];// save the left child's Node
+		map[temp] = map[parent];// swap the left child with parent Node
+		map[parent] = swap;//save the left child in the old slot (Parent's parent now points here)
+
+		map[temp]->left = map[parent]->right;//point old parent right to old parent
+		map[parent]->right = temp;// 
+
+	}
+
+	void rotateLeft(int parent){
+		std::cout << "rotating left " << endl;
+		int temp = map[parent]->right;//get the right childs address
+		Node * swap = map[temp];// save the right child's Node
+		map[temp] = map[parent];// swap the right child with parent Node
+		map[parent] = swap;//save the right child in the old slot (Parent's parent now points here)
+
+		map[temp]->right = map[parent]->left;//point old parent left to old parent
+		map[parent]->left = temp;// 
+
+	}
+
+	void pushFrontFreelist(int i){
+		map[i]->right = -1;
+		map[i]->left = freelist;
+		map[i]->key = 0;
+		map[i]->value = 0;
+		freelist = i;
+	}
+
+	int removeRoot(){
+		std::cout << "removing root" << endl;
+		return 0;
+	}
 
 //-----------------------EQUAL TO OPERATOR----------------------//
 	bool compareTo(string a, string b){
